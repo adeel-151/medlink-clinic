@@ -340,103 +340,135 @@ export default function PrescriptionsPage() {
       {/* Hidden PDF Template */}
       {activePdfData && (
         <div className="fixed top-[2000px] left-[-2000px] opacity-0 pointer-events-none">
-          <div ref={pdfTemplateRef} className="w-[800px] bg-white relative overflow-hidden" style={{ backgroundColor: '#ffffff', color: '#0f172a', padding: '40px', minHeight: '1050px', border: '1px solid #e2e8f0', fontFamily: '"Arial", sans-serif' }}>
+          <div ref={pdfTemplateRef} className="w-[800px] bg-white relative overflow-hidden" style={{ width: '800px', minHeight: '1100px', backgroundColor: '#ffffff', color: '#0f172a', fontFamily: '"Arial", sans-serif', display: 'flex', flexDirection: 'column' }}>
             
-            {/* Watermark */}
-            <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%) rotate(-45deg)', opacity: 0.04, fontSize: '120px', fontWeight: '900', color: '#0d9488', whiteSpace: 'nowrap', zIndex: 0, pointerEvents: 'none', letterSpacing: '-0.05em' }}>
-              MEDLINK CLINIC
+            {/* Header Area */}
+            <div style={{ position: 'relative', padding: '40px 40px 20px 40px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+              {/* Diagonal Dark Blue Slash in Background */}
+              <div style={{ position: 'absolute', top: 0, left: '50%', width: '40px', height: '100%', backgroundColor: '#0f172a', transform: 'skewX(-20deg)', zIndex: 0 }}></div>
+              <div style={{ position: 'absolute', top: 0, right: 0, width: '200px', height: '100%', backgroundColor: '#f8fafc', zIndex: 0, opacity: 0.5 }}></div>
+
+              {/* Left: Doctor Info */}
+              <div style={{ zIndex: 10, maxWidth: '300px' }}>
+                <h1 style={{ fontSize: '28px', fontWeight: '900', color: '#0d9488', margin: 0, letterSpacing: '-0.5px' }}>
+                  {activePdfData.doctorName}
+                </h1>
+                <p style={{ fontSize: '14px', fontWeight: 'bold', color: '#334155', margin: '4px 0', letterSpacing: '2px', textTransform: 'uppercase' }}>
+                  Qualification
+                </p>
+                <p style={{ fontSize: '10px', color: '#94a3b8', margin: 0, lineHeight: '1.4' }}>
+                  Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy
+                </p>
+              </div>
+
+              {/* Right: Hospital Info */}
+              <div style={{ zIndex: 10, textAlign: 'right', maxWidth: '300px' }}>
+                <h2 style={{ fontSize: '22px', fontWeight: 'bold', color: '#0f172a', margin: 0, letterSpacing: '1px' }}>
+                  HOSPITAL NAME
+                </h2>
+                <p style={{ fontSize: '12px', fontWeight: 'bold', color: '#334155', margin: '4px 0', letterSpacing: '1px' }}>
+                  SLOGAN HERE
+                </p>
+                <p style={{ fontSize: '10px', color: '#94a3b8', margin: 0, lineHeight: '1.4' }}>
+                  Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet do
+                </p>
+              </div>
             </div>
 
-            <div style={{ position: 'relative', zIndex: 10 }}>
-              {/* Header */}
-              <div style={{ borderBottom: '3px solid #0d9488', paddingBottom: '20px', marginBottom: '30px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
-                  <div style={{ width: '60px', height: '60px', backgroundColor: '#0d9488', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff', fontSize: '32px', fontWeight: 'bold' }}>
-                    +
+            {/* Top Bars (Teal + Light Cyan) */}
+            <div style={{ width: '100%' }}>
+              <div style={{ width: '100%', height: '14px', backgroundColor: '#0d9488' }}></div>
+              <div style={{ width: '100%', height: '4px', backgroundColor: '#ffffff' }}></div>
+              <div style={{ width: '100%', backgroundColor: '#e0f2fe', border: '1px solid #0d9488', padding: '8px 40px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span style={{ fontSize: '12px', fontWeight: 'bold', color: '#0f172a' }}>Patient Name: <span style={{ fontWeight: 'normal' }}>{activePdfData.patientName}</span></span>
+                <span style={{ fontSize: '12px', fontWeight: 'bold', color: '#0f172a' }}>Age: <span style={{ fontWeight: 'normal' }}>--</span></span>
+                <span style={{ fontSize: '12px', fontWeight: 'bold', color: '#0f172a' }}>Date: <span style={{ fontWeight: 'normal' }}>{activePdfData.date}</span></span>
+              </div>
+            </div>
+
+            {/* Body Area */}
+            <div style={{ display: 'flex', flex: 1, minHeight: '650px' }}>
+              {/* Left Column (Narrow, Light Grey) */}
+              <div style={{ width: '25%', backgroundColor: '#f8fafc', padding: '40px 20px', borderRight: '1px solid #e2e8f0' }}>
+                <div style={{ marginBottom: '30px' }}>
+                  <h4 style={{ fontSize: '18px', fontWeight: 'bold', color: '#0d9488', margin: '0 0 4px 0' }}>C/C</h4>
+                </div>
+                <div style={{ marginBottom: '30px', marginTop: '120px' }}>
+                  <h4 style={{ fontSize: '18px', fontWeight: 'bold', color: '#0d9488', margin: '0 0 4px 0' }}>D/E</h4>
+                </div>
+                <div style={{ marginBottom: '30px' }}>
+                  <h4 style={{ fontSize: '18px', fontWeight: 'bold', color: '#0d9488', margin: '0 0 4px 0' }}>BP=</h4>
+                </div>
+              </div>
+
+              {/* Right Column (Wide, White, Watermark) */}
+              <div style={{ width: '75%', padding: '40px', position: 'relative' }}>
+                {/* Watermark SVG Data URI for simple medical heart cross */}
+                <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', opacity: 0.05, zIndex: 0, pointerEvents: 'none' }}>
+                  <svg width="300" height="300" viewBox="0 0 24 24" fill="none" stroke="#0d9488" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M20.42 4.58a5.4 5.4 0 0 0-7.65 0l-.77.78-.77-.78a5.4 5.4 0 0 0-7.65 0C1.46 6.7 1.33 10.28 4 13l8 8 8-8c2.67-2.72 2.54-6.3.42-8.42z"></path>
+                    <line x1="12" y1="8" x2="12" y2="14"></line>
+                    <line x1="9" y1="11" x2="15" y2="11"></line>
+                  </svg>
+                </div>
+
+                <div style={{ position: 'relative', zIndex: 10 }}>
+                  <div style={{ fontSize: '36px', fontWeight: 'bold', color: '#0f172a', fontFamily: '"Times New Roman", serif', marginBottom: '30px' }}>
+                    <span style={{ color: '#0f172a' }}>R</span><span style={{ fontSize: '24px' }}>x</span>
+                  </div>
+
+                  <div style={{ marginBottom: '30px' }}>
+                    <h3 style={{ fontSize: '20px', fontWeight: 'bold', color: '#0f172a', margin: '0 0 15px 0' }}>
+                      {activePdfData.medicines}
+                    </h3>
+                    <div style={{ display: 'flex', gap: '40px', color: '#334155' }}>
+                      <div>
+                        <span style={{ fontSize: '12px', fontWeight: 'bold', color: '#64748b', textTransform: 'uppercase', display: 'block', marginBottom: '4px' }}>Dosage</span>
+                        <span style={{ fontSize: '16px', fontWeight: 'bold' }}>{activePdfData.dosage}</span>
+                      </div>
+                      <div>
+                        <span style={{ fontSize: '12px', fontWeight: 'bold', color: '#64748b', textTransform: 'uppercase', display: 'block', marginBottom: '4px' }}>Duration</span>
+                        <span style={{ fontSize: '16px', fontWeight: 'bold' }}>{activePdfData.duration}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Footer Area */}
+            <div style={{ width: '100%', height: '80px', display: 'flex' }}>
+              {/* Left Dark Blue block */}
+              <div style={{ width: '35%', backgroundColor: '#0f172a', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff', clipPath: 'polygon(0 0, 90% 0, 100% 100%, 0 100%)' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', paddingRight: '20px' }}>
+                  <div style={{ width: '24px', height: '24px', backgroundColor: '#ffffff', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <span style={{ color: '#0f172a', fontSize: '12px', fontWeight: 'bold' }}>📞</span>
                   </div>
                   <div>
-                    <h1 style={{ fontSize: '32px', fontWeight: '900', color: '#0d9488', margin: 0, fontFamily: '"Georgia", serif', letterSpacing: '-0.5px' }}>
-                      MEDLINK CLINIC
-                    </h1>
-                    <p style={{ fontSize: '12px', color: '#64748b', margin: '4px 0 0 0' }}>123 Health Ave, Medical District, NY 10001</p>
-                    <p style={{ fontSize: '12px', color: '#64748b', margin: '2px 0 0 0' }}>Tel: +1 (555) 123-4567 | www.medlink.com</p>
+                    <span style={{ fontSize: '10px', display: 'block', opacity: 0.8 }}>Call Now</span>
+                    <span style={{ fontSize: '14px', fontWeight: 'bold' }}>000 12345 6149</span>
                   </div>
                 </div>
-                <div style={{ textAlign: 'right' }}>
-                  <h2 style={{ fontSize: '24px', fontWeight: 'bold', color: '#1e293b', margin: 0, letterSpacing: '2px', textTransform: 'uppercase' }}>Prescription</h2>
-                  <p style={{ fontSize: '14px', fontWeight: 'bold', color: '#0d9488', margin: '8px 0 4px 0' }}>Rx-{String(activePdfData.id).substr(0,8).toUpperCase()}</p>
-                  <p style={{ fontSize: '12px', color: '#64748b', margin: 0 }}>Date: {activePdfData.date}</p>
-                </div>
               </div>
 
-              {/* Patient Info Table */}
-              <div style={{ backgroundColor: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '8px', padding: '20px', marginBottom: '30px' }}>
-                <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                  <tbody>
-                    <tr>
-                      <td style={{ width: '50%', padding: '0 10px 10px 0' }}>
-                        <span style={{ fontSize: '10px', fontWeight: 'bold', color: '#64748b', textTransform: 'uppercase', letterSpacing: '1px', display: 'block' }}>Patient Name</span>
-                        <strong style={{ fontSize: '18px', color: '#0f172a' }}>{activePdfData.patientName}</strong>
-                      </td>
-                      <td style={{ width: '50%', padding: '0 0 10px 10px' }}>
-                        <span style={{ fontSize: '10px', fontWeight: 'bold', color: '#64748b', textTransform: 'uppercase', letterSpacing: '1px', display: 'block' }}>Prescribing Doctor</span>
-                        <strong style={{ fontSize: '18px', color: '#0f172a' }}>{activePdfData.doctorName}</strong>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-
-              {/* Body Content */}
-              <div style={{ minHeight: '400px' }}>
-                <div style={{ display: 'flex', alignItems: 'flex-start', gap: '20px', marginBottom: '30px' }}>
-                  <span style={{ fontSize: '64px', fontWeight: 'bold', color: '#0d9488', fontFamily: '"Georgia", serif', lineHeight: '1', opacity: 0.8 }}>Rx</span>
-                  <div style={{ flex: 1, borderTop: '2px dashed #e2e8f0', marginTop: '32px' }}></div>
+              {/* Right Light Cyan block */}
+              <div style={{ width: '65%', backgroundColor: '#e0f2fe', display: 'flex', alignItems: 'center', justifyContent: 'space-around', paddingLeft: '30px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <div style={{ width: '20px', height: '20px', backgroundColor: '#0d9488', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <span style={{ color: '#ffffff', fontSize: '10px' }}>📍</span>
+                  </div>
+                  <span style={{ fontSize: '12px', color: '#0f172a', fontWeight: 'bold' }}>Address Here Number 123</span>
                 </div>
                 
-                <div style={{ marginBottom: '40px', backgroundColor: '#f0fdfa', border: '1px solid #ccfbf1', borderRadius: '8px', padding: '25px' }}>
-                  <h4 style={{ fontSize: '22px', fontWeight: 'bold', color: '#115e59', margin: '0 0 20px 0', borderBottom: '1px solid #99f6e4', paddingBottom: '15px' }}>
-                    {activePdfData.medicines}
-                  </h4>
-                  <table style={{ width: '100%' }}>
-                    <tbody>
-                      <tr>
-                        <td style={{ width: '50%' }}>
-                          <span style={{ fontSize: '11px', fontWeight: 'bold', color: '#0d9488', textTransform: 'uppercase', display: 'block', marginBottom: '4px' }}>Dosage Instructions</span>
-                          <span style={{ fontSize: '16px', fontWeight: 'bold', color: '#1e293b' }}>{activePdfData.dosage}</span>
-                        </td>
-                        <td style={{ width: '50%' }}>
-                          <span style={{ fontSize: '11px', fontWeight: 'bold', color: '#0d9488', textTransform: 'uppercase', display: 'block', marginBottom: '4px' }}>Duration</span>
-                          <span style={{ fontSize: '16px', fontWeight: 'bold', color: '#1e293b' }}>{activePdfData.duration}</span>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-
-              {/* Signatures & Footer */}
-              <div style={{ marginTop: 'auto', paddingTop: '60px' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '40px' }}>
-                  <div style={{ width: '300px' }}>
-                    <p style={{ fontSize: '12px', color: '#64748b', margin: 0, fontWeight: 'bold' }}>Valid for 30 days from prescription date.</p>
-                    <p style={{ fontSize: '11px', color: '#94a3b8', margin: '4px 0 0 0', fontStyle: 'italic' }}>Dispense as written unless generic substitution is permitted.</p>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <div style={{ width: '20px', height: '20px', backgroundColor: '#0d9488', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <span style={{ color: '#ffffff', fontSize: '10px' }}>🌐</span>
                   </div>
-                  <div style={{ width: '250px', textAlign: 'center' }}>
-                    <div style={{ borderBottom: '1px solid #1e293b', paddingBottom: '10px', marginBottom: '10px', minHeight: '60px', display: 'flex', alignItems: 'flex-end', justifyContent: 'center' }}>
-                      <span style={{ fontFamily: '"Brush Script MT", cursive', fontSize: '36px', color: '#0f172a' }}>{activePdfData.doctorName}</span>
-                    </div>
-                    <p style={{ fontSize: '12px', fontWeight: 'bold', color: '#1e293b', margin: 0, textTransform: 'uppercase', letterSpacing: '1px' }}>Doctor's Signature</p>
-                  </div>
-                </div>
-
-                <div style={{ borderTop: '1px solid #e2e8f0', paddingTop: '15px', textAlign: 'center' }}>
-                  <p style={{ fontSize: '10px', color: '#94a3b8', margin: 0 }}>
-                    Generated electronically on {new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute:'2-digit' })}
-                  </p>
+                  <span style={{ fontSize: '12px', color: '#0f172a', fontWeight: 'bold' }}>www.yourname.com</span>
                 </div>
               </div>
             </div>
+
           </div>
         </div>
       )}
