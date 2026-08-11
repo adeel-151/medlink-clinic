@@ -31,7 +31,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   // If loading or unauthenticated, wait for middleware
   if (status === "loading") return <div className="min-h-screen flex items-center justify-center bg-bg-dashboard"><div className="w-8 h-8 border-4 border-teal-500 border-t-transparent rounded-full animate-spin"></div></div>;
 
-  const role = session?.user?.role as string | undefined;
+  const role = (session?.user as any)?.role as string | undefined;
 
   // Filter links for Patients vs Admins
   const visibleLinks = sidebarLinks.filter(link => {

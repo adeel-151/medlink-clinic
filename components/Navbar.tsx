@@ -99,7 +99,7 @@ export default function Navbar() {
             {session ? (
               <>
                 <Link
-                  href={session.user?.role === "PATIENT" ? "/dashboard/patient" : "/dashboard"}
+                  href={(session.user as any)?.role === "PATIENT" ? "/dashboard/patient" : "/dashboard"}
                   className="flex items-center gap-2 text-sm font-bold text-teal-700 hover:text-teal-900 transition-colors uppercase tracking-wide"
                 >
                   <FaUserCircle size={18} />
