@@ -56,7 +56,6 @@ export default function Hero({ onBookAppointment }: HeroProps) {
                 Book Appointment
               </Button>
               <Button
-                asChild
                 variant="outline"
                 size="lg"
                 className="h-14 px-8 text-base text-white border-white/20 bg-white/5 hover:bg-white/10 hover:text-white rounded-none backdrop-blur-sm"

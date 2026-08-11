@@ -33,7 +33,7 @@ export async function getPrescriptions() {
     orderBy: { createdAt: "desc" },
   });
 
-  return prescriptions.map(p => ({
+  return prescriptions.map(p: any) => ({
     id: p.id,
     patientName: `${p.patient.firstName} ${p.patient.lastName}`,
     doctorName: `Dr. ${p.doctor.firstName} ${p.doctor.lastName}`,
@@ -54,7 +54,7 @@ export async function getAppointments() {
     orderBy: { datetime: "asc" },
   });
 
-  return appointments.map(a => ({
+  return appointments.map((a: any) => ({
     id: a.id,
     patient: `${a.patient.firstName} ${a.patient.lastName}`,
     doctor: `Dr. ${a.doctor.firstName} ${a.doctor.lastName}`,
@@ -75,7 +75,7 @@ export async function getDoctors() {
     }
   });
 
-  return doctors.map(d => ({
+  return doctors.map((d: any) => ({
     id: d.id,
     name: `Dr. ${d.firstName} ${d.lastName}`,
     specialty: d.specialty,
@@ -98,7 +98,7 @@ export async function getPatients() {
     }
   });
 
-  return patients.map(p => ({
+  return patients.map(p: any) => ({
     id: p.id,
     name: `${p.firstName} ${p.lastName}`,
     email: p.user.email || "No email",
@@ -119,7 +119,7 @@ export async function getRecords() {
     orderBy: { createdAt: "desc" },
   });
 
-  return records.map(r => ({
+  return records.map((r: any) => ({
     id: r.id,
     patient: `${r.patient.firstName} ${r.patient.lastName}`,
     doctor: `Dr. ${r.doctor.firstName} ${r.doctor.lastName}`,

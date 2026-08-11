@@ -1,10 +1,10 @@
 import { NextResponse } from 'next/server'
 import prisma from '@/lib/prisma'
 
-export async function GET(request: Request, { params }: { params: { id: string } }) {
+export async function GET(request: Request, context: any) {
   try {
     const prescription = await prisma.prescription.findUnique({
-      where: { id: params.id },
+      where: { id: (await context.params).id },
       include: {
         patient: true,
         doctor: true
@@ -22,13 +22,13 @@ export async function GET(request: Request, { params }: { params: { id: string }
   }
 }
 
-export async function PUT(request: Request, { params }: { params: { id: string } }) {
+export async function PUT(request: Request, context: any) {
   try {
     const body = await request.json()
     const { medicines, dosage, instructions, duration } = body
 
     const prescription = await prisma.prescription.update({
-      where: { id: params.id },
+      where: { id: (await context.params).id },
       data: {
         medicines,
         dosage,
@@ -44,10 +44,10 @@ export async function PUT(request: Request, { params }: { params: { id: string }
   }
 }
 
-export async function DELETE(request: Request, { params }: { params: { id: string } }) {
+export async function DELETE(request: Request, context: any) {
   try {
     await prisma.prescription.delete({
-      where: { id: params.id }
+      where: { id: (await context.params).id }
     })
 
     return NextResponse.json({ message: 'Prescription deleted successfully' })

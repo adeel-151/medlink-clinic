@@ -1,10 +1,10 @@
 import { NextResponse } from 'next/server'
 import prisma from '@/lib/prisma'
 
-export async function GET(request: Request, { params }: { params: { id: string } }) {
+export async function GET(request: Request, context: any) {
   try {
     const doctor = await prisma.doctor.findUnique({
-      where: { id: params.id },
+      where: { id: (await context.params).id },
       include: {
         user: { select: { email: true } },
         appointments: true,
@@ -23,13 +23,13 @@ export async function GET(request: Request, { params }: { params: { id: string }
   }
 }
 
-export async function PUT(request: Request, { params }: { params: { id: string } }) {
+export async function PUT(request: Request, context: any) {
   try {
     const body = await request.json()
     const { firstName, lastName, specialty, experienceYears, bio } = body
 
     const doctor = await prisma.doctor.update({
-      where: { id: params.id },
+      where: { id: (await context.params).id },
       data: {
         firstName,
         lastName,
@@ -46,10 +46,10 @@ export async function PUT(request: Request, { params }: { params: { id: string }
   }
 }
 
-export async function DELETE(request: Request, { params }: { params: { id: string } }) {
+export async function DELETE(request: Request, context: any) {
   try {
     await prisma.doctor.delete({
-      where: { id: params.id }
+      where: { id: (await context.params).id }
     })
 
     return NextResponse.json({ message: 'Doctor deleted successfully' })
