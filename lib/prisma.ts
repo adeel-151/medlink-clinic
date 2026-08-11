@@ -1,5 +1,4 @@
-// Dynamic require to bypass Turbopack static analysis and Vercel @prisma/client resolution errors
-const { PrismaClient } = eval('require')(process.cwd() + '/prisma/generated/client');
+import { PrismaClient } from '@prisma/client'
 
 const prismaClientSingleton = () => {
   return new PrismaClient()

@@ -1,14 +1,6 @@
 "use server";
 
-// Bypass Turbopack static analysis completely
-const getPrisma = () => {
-  const req = eval("require");
-  const path = req("path");
-  return req(path.join(process.cwd(), "prisma", "generated", "client"));
-};
-
-const { PrismaClient } = getPrisma();
-const prisma = new PrismaClient();
+import prisma from "@/lib/prisma";
 
 export async function getDashboardMetrics() {
   const [totalPatients, totalAppointments, totalRevenue] = await Promise.all([
