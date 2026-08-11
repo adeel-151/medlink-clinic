@@ -33,7 +33,7 @@ export async function getPrescriptions() {
     orderBy: { createdAt: "desc" },
   });
 
-  return prescriptions.map(p: any) => ({
+  return prescriptions.map((p: any) => ({
     id: p.id,
     patientName: `${p.patient.firstName} ${p.patient.lastName}`,
     doctorName: `Dr. ${p.doctor.firstName} ${p.doctor.lastName}`,
@@ -98,7 +98,7 @@ export async function getPatients() {
     }
   });
 
-  return patients.map(p: any) => ({
+  return patients.map((p: any) => ({
     id: p.id,
     name: `${p.firstName} ${p.lastName}`,
     email: p.user.email || "No email",
