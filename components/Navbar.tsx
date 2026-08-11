@@ -122,13 +122,13 @@ export default function Navbar() {
               </Link>
             )}
             <div className="w-[1px] h-6 bg-slate-200 mx-1"></div>
-            <button
-              onClick={() => setIsModalOpen(true)}
+            <Link
+              href="/book"
               className="group relative inline-flex items-center justify-center gap-2 px-8 py-3.5 text-[13px] font-bold text-white bg-slate-900 uppercase tracking-widest overflow-hidden transition-all duration-300 hover:bg-teal-700 shadow-md"
             >
               <FiCalendar size={16} />
               Book Appointment
-            </button>
+            </Link>
           </div>
 
           {/* Mobile Menu Toggle */}
@@ -170,15 +170,14 @@ export default function Navbar() {
                   >
                     Patient Portal
                   </Link>
-                  <button
-                    onClick={() => {
-                      setIsOpen(false);
-                      setIsModalOpen(true);
-                    }}
-                    className="btn-primary w-full py-4"
+                  <Link
+                    href="/book"
+                    onClick={() => setIsOpen(false)}
+                    className="flex items-center justify-center gap-2 w-full py-4 bg-slate-900 text-white font-bold tracking-widest uppercase text-sm hover:bg-teal-700 transition-colors shadow-lg"
                   >
+                    <FiCalendar size={18} />
                     Book Appointment
-                  </button>
+                  </Link>
                 </div>
               </div>
             </motion.div>
