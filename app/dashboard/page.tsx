@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import {
   FiUsers, FiCalendar, FiDollarSign, FiActivity,
   FiTrendingUp, FiArrowUpRight, FiChevronLeft, FiChevronRight, FiClock,
@@ -41,7 +43,15 @@ const fadeInUp = { hidden: { opacity: 0, y: 16 }, visible: { opacity: 1, y: 0, t
 const stagger = { visible: { transition: { staggerChildren: 0.06 } } };
 
 export default function DashboardPage() {
+  const { data: session } = useSession();
+  const router = useRouter();
   const [metrics, setMetrics] = useState({ patients: 0, appointments: 0, revenue: 0 });
+
+  useEffect(() => {
+    if ((session?.user as any)?.role === "PATIENT") {
+      router.push("/dashboard/patient");
+    }
+  }, [session, router]);
 
   useEffect(() => {
     async function fetchMetrics() {
