@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { useSession, signOut } from "next-auth/react";
 import { motion, AnimatePresence } from "framer-motion";
 import { FaStethoscope } from "react-icons/fa";
 import {
@@ -22,8 +23,24 @@ const sidebarLinks = [
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const router = useRouter();
+  const { data: session, status } = useSession();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
+
+  // If loading or unauthenticated, wait for middleware
+  if (status === "loading") return <div className="min-h-screen flex items-center justify-center bg-bg-dashboard"><div className="w-8 h-8 border-4 border-teal-500 border-t-transparent rounded-full animate-spin"></div></div>;
+
+  const role = session?.user?.role as string | undefined;
+
+  // Filter links for Patients vs Admins
+  const visibleLinks = sidebarLinks.filter(link => {
+    if (role === "PATIENT") {
+      // Patients should only see a subset of links (or future patient portal links)
+      return ["Dashboard"].includes(link.label); 
+    }
+    return true;
+  });
 
   return (
     <div className="min-h-screen bg-bg-dashboard flex">
@@ -71,7 +88,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           <span className="block px-4 pb-3 text-[10px] font-bold text-muted uppercase tracking-[0.12em]" style={{ fontFamily: 'var(--font-heading)' }}>
             Main Menu
           </span>
-          {sidebarLinks.map((link) => {
+          {visibleLinks.map((link) => {
             const isActive = pathname === link.href;
             return (
               <Link
@@ -157,26 +174,46 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                   onClick={() => setProfileOpen(!profileOpen)}
                   className="flex items-center gap-2.5 p-1.5 pr-3 rounded-[12px] hover:bg-gray-50 transition-all"
                 >
-                  <div className="w-8 h-8 rounded-[10px] gradient-primary flex items-center justify-center text-[11px] font-bold text-white">
-                    DS
+                  <div className="text-right hidden sm:block">
+                    <h4 className="text-[13px] font-bold text-heading leading-tight" style={{ fontFamily: 'var(--font-heading)' }}>
+                      {session?.user?.email ? session.user.email.split('@')[0] : "Admin"}
+                    </h4>
+                    <span className="text-[11px] font-semibold text-muted tracking-wide">{role || "Administrator"}</span>
+                  </div>
+                  <div className="w-10 h-10 rounded-[12px] bg-teal-50 flex items-center justify-center border border-teal-100 shrink-0">
+                    <span className="text-sm font-bold text-teal-700">
+                      {session?.user?.email ? session.user.email[0].toUpperCase() : "A"}
+                    </span>
                   </div>
                   <FiChevronDown className={`text-muted transition-transform ${profileOpen ? "rotate-180" : ""}`} size={13} />
                 </button>
                 <AnimatePresence>
                   {profileOpen && (
                     <motion.div
-                      initial={{ opacity: 0, y: 8, scale: 0.97 }}
+                      initial={{ opacity: 0, y: 10, scale: 0.95 }}
                       animate={{ opacity: 1, y: 0, scale: 1 }}
-                      exit={{ opacity: 0, y: 8, scale: 0.97 }}
-                      transition={{ duration: 0.15 }}
-                      className="absolute right-0 top-full mt-2 w-48 bg-white rounded-2xl shadow-[0_12px_40px_rgba(0,0,0,0.08)] border border-gray-100 overflow-hidden p-2"
+                      exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                      transition={{ duration: 0.2 }}
+                      className="absolute right-0 mt-3 w-[240px] bg-white rounded-2xl shadow-[0_10px_40px_rgba(0,0,0,0.08)] border border-gray-100 overflow-hidden py-2"
                     >
-                      <Link href="/dashboard/settings" className="block px-4 py-2.5 rounded-xl text-sm text-body hover:bg-primary-50 hover:text-primary-600 font-medium">
-                        Profile Settings
+                      <div className="px-4 py-3 border-b border-gray-50 mb-2">
+                        <h4 className="text-sm font-bold text-heading" style={{ fontFamily: 'var(--font-heading)' }}>
+                          {session?.user?.email || "Admin User"}
+                        </h4>
+                        <p className="text-[11px] text-muted">{session?.user?.email}</p>
+                      </div>
+                      
+                      <Link href="/dashboard/settings" className="flex items-center gap-3 px-4 py-2 text-[13px] font-semibold text-gray-600 hover:text-teal-700 hover:bg-teal-50/50 transition-colors">
+                        <FiSettings size={15} />
+                        Account Settings
                       </Link>
-                      <Link href="/" className="block px-4 py-2.5 rounded-xl text-sm text-red-500 hover:bg-red-50 font-medium">
+                      <button 
+                        onClick={() => signOut({ callbackUrl: "/" })}
+                        className="w-full flex items-center gap-3 px-4 py-2 text-[13px] font-semibold text-red-600 hover:bg-red-50/50 transition-colors mt-1"
+                      >
+                        <FiLogOut size={15} />
                         Logout
-                      </Link>
+                      </button>
                     </motion.div>
                   )}
                 </AnimatePresence>

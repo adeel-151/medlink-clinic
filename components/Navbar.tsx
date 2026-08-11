@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { FiMenu, FiX, FiPhone, FiCalendar, FiMapPin, FiClock } from "react-icons/fi";
 import { FaStethoscope, FaUserCircle } from "react-icons/fa";
 import { usePathname } from "next/navigation";
+import { useSession, signOut } from "next-auth/react";
 import BookingModal from "./BookingModal";
 
 const navLinks = [
@@ -22,6 +23,7 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const pathname = usePathname();
+  const { data: session } = useSession();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -94,13 +96,31 @@ export default function Navbar() {
 
           {/* CTA Desktop */}
           <div className="hidden lg:flex items-center gap-4">
-            <Link 
-              href="/auth/login" 
-              className="flex items-center gap-2 text-sm font-bold text-slate-700 hover:text-teal-700 transition-colors uppercase tracking-wide"
-            >
-              <FaUserCircle size={18} className="text-teal-600" />
-              Patient Portal
-            </Link>
+            {session ? (
+              <>
+                <Link
+                  href={session.user?.role === "PATIENT" ? "/dashboard/patient" : "/dashboard"}
+                  className="flex items-center gap-2 text-sm font-bold text-teal-700 hover:text-teal-900 transition-colors uppercase tracking-wide"
+                >
+                  <FaUserCircle size={18} />
+                  Dashboard
+                </Link>
+                <button
+                  onClick={() => signOut()}
+                  className="text-[13px] font-bold text-slate-500 hover:text-red-500 transition-colors uppercase tracking-widest"
+                >
+                  Logout
+                </button>
+              </>
+            ) : (
+              <Link 
+                href="/auth/login" 
+                className="flex items-center gap-2 text-sm font-bold text-slate-700 hover:text-teal-700 transition-colors uppercase tracking-wide"
+              >
+                <FaUserCircle size={18} className="text-teal-600" />
+                Login
+              </Link>
+            )}
             <div className="w-[1px] h-6 bg-slate-200 mx-1"></div>
             <button
               onClick={() => setIsModalOpen(true)}
