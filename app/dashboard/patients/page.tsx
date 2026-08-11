@@ -10,6 +10,7 @@ import {
   FiMail,
   FiCalendar,
   FiUser,
+  FiEdit2,
 } from "react-icons/fi";
 import { getPatients, createPatient } from "@/app/actions/dashboard";
 import {
