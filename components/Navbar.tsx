@@ -7,8 +7,6 @@ import { FiMenu, FiX, FiPhone, FiCalendar, FiMapPin, FiClock } from "react-icons
 import { FaStethoscope, FaUserCircle } from "react-icons/fa";
 import { usePathname } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
-import BookingModal from "./BookingModal";
-
 const navLinks = [
   { label: "Home", href: "/" },
   { label: "Departments", href: "/departments" },
@@ -184,7 +182,6 @@ export default function Navbar() {
         </AnimatePresence>
       </header>
 
-      <BookingModal />
     </>
   );
 }
