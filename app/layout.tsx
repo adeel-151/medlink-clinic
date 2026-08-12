@@ -27,6 +27,8 @@ export const metadata: Metadata = {
   keywords: "healthcare, clinic, doctors, appointments, medical, MedLink",
 };
 
+import { Toaster } from "sonner";
+
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
@@ -36,6 +38,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     >
       <body className="min-h-full flex flex-col antialiased" suppressHydrationWarning>
         <AuthProvider>{children}</AuthProvider>
+        <Toaster position="top-right" richColors />
       </body>
     </html>
   );

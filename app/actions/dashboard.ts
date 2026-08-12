@@ -216,3 +216,24 @@ export async function createRecord(data: { patientId: string, doctorId: string, 
     }
   });
 }
+
+export async function getNotifications(userId: string) {
+  const notifications = await prisma.notification.findMany({
+    where: { userId },
+    orderBy: { createdAt: "desc" },
+    take: 5,
+  });
+  return notifications.map(n => ({
+    id: n.id,
+    message: n.message,
+    isRead: n.isRead,
+    time: n.createdAt.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
+  }));
+}
+
+export async function markNotificationAsRead(id: string) {
+  await prisma.notification.update({
+    where: { id },
+    data: { isRead: true },
+  });
+}

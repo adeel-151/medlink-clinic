@@ -1,17 +1,32 @@
 import Link from "next/link";
 import { FiStar } from "react-icons/fi";
 
-const doctors = [
-  { name: "Dr. Sarah Mitchell", specialty: "Cardiologist", rating: 4.9, patients: "2.4k+", initials: "SM" },
-  { name: "Dr. Michael Chen", specialty: "Neurologist", rating: 4.8, patients: "1.8k+", initials: "MC" },
-  { name: "Dr. Emily Rodriguez", specialty: "Pediatrician", rating: 4.9, patients: "3.1k+", initials: "ER" },
-];
+import prisma from "@/lib/prisma";
 
-interface DoctorsProps {
-  onBookAppointment: () => void;
-}
+export default async function Doctors() {
+  let fetchedDoctors: any[] = [];
+  try {
+    fetchedDoctors = await prisma.doctor.findMany({
+      take: 3,
+      orderBy: { rating: 'desc' },
+    });
+  } catch (error) {
+    console.error("Failed to fetch doctors:", error);
+  }
 
-export default function Doctors({ onBookAppointment }: DoctorsProps) {
+  const displayDoctors = fetchedDoctors.length > 0 
+    ? fetchedDoctors.map(d => ({
+        name: `Dr. ${d.firstName} ${d.lastName}`,
+        specialty: d.specialty,
+        rating: d.rating,
+        patients: d.bio || "1k+",
+        initials: `${d.firstName[0]}${d.lastName[0]}`
+      }))
+    : [
+        { name: "Dr. Sarah Mitchell", specialty: "Cardiologist", rating: 4.9, patients: "2.4k+", initials: "SM" },
+        { name: "Dr. Michael Chen", specialty: "Neurologist", rating: 4.8, patients: "1.8k+", initials: "MC" },
+        { name: "Dr. Emily Rodriguez", specialty: "Pediatrician", rating: 4.9, patients: "3.1k+", initials: "ER" },
+      ];
   return (
     <section className="section-padding bg-slate-50 border-t border-slate-100" id="doctors">
       <div className="max-w-1280">
@@ -30,7 +45,7 @@ export default function Doctors({ onBookAppointment }: DoctorsProps) {
         </div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {doctors.map((doctor, idx) => {
+          {displayDoctors.map((doctor, idx) => {
             const doctorImages = [
               "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?q=80&w=2670&auto=format&fit=crop",
               "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?q=80&w=2670&auto=format&fit=crop",
@@ -64,9 +79,9 @@ export default function Doctors({ onBookAppointment }: DoctorsProps) {
                     {doctor.patients} patients
                   </div>
                 </div>
-                <button onClick={onBookAppointment} className="btn-outline w-full mt-auto">
+                <Link href="?modal=booking" scroll={false} className="btn-outline w-full mt-auto inline-flex items-center justify-center">
                   Book Appointment
-                </button>
+                </Link>
               </div>
             </div>
             );

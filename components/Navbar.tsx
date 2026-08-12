@@ -21,7 +21,6 @@ const navLinks = [
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const pathname = usePathname();
   const { data: session } = useSession();
 
@@ -185,7 +184,7 @@ export default function Navbar() {
         </AnimatePresence>
       </header>
 
-      <BookingModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
+      <BookingModal />
     </>
   );
 }

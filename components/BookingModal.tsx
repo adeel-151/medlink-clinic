@@ -1,19 +1,20 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { FiCalendar, FiClock, FiCheckCircle } from "react-icons/fi";
 import { FaUserMd } from "react-icons/fa";
 import { motion } from "framer-motion";
+import { useRouter, useSearchParams, usePathname } from "next/navigation";
 
-interface BookingModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-}
+function BookingModalInner() {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
+  const isOpen = searchParams.get('modal') === 'booking';
 
-export default function BookingModal({ isOpen, onClose }: BookingModalProps) {
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
 
@@ -31,7 +32,9 @@ export default function BookingModal({ isOpen, onClose }: BookingModalProps) {
     if (!open) {
       // Delay resetting state to prevent UI flicker while closing
       setTimeout(() => setStep(1), 300);
-      onClose();
+      const params = new URLSearchParams(searchParams.toString());
+      params.delete('modal');
+      router.replace(`${pathname}?${params.toString()}`, { scroll: false });
     }
   };
 
@@ -133,5 +136,13 @@ export default function BookingModal({ isOpen, onClose }: BookingModalProps) {
         )}
       </DialogContent>
     </Dialog>
+  );
+}
+
+export default function BookingModal() {
+  return (
+    <Suspense fallback={null}>
+      <BookingModalInner />
+    </Suspense>
   );
 }

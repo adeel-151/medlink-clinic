@@ -3,11 +3,7 @@ import { Button } from "@/components/ui/button";
 import { FiCheckCircle, FiChevronDown } from "react-icons/fi";
 import { FaUserMd, FaHeartbeat } from "react-icons/fa";
 
-interface HeroProps {
-  onBookAppointment: () => void;
-}
-
-export default function Hero({ onBookAppointment }: HeroProps) {
+export default function Hero() {
   return (
     <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden bg-slate-900">
       {/* Cinematic Background */}
@@ -48,13 +44,13 @@ export default function Hero({ onBookAppointment }: HeroProps) {
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
-              <Button
-                onClick={onBookAppointment}
-                size="lg"
-                className="h-14 px-8 text-base bg-teal-600 hover:bg-teal-500 text-white rounded-none shadow-[0_0_40px_rgba(13,148,136,0.3)] transition-all hover:shadow-[0_0_60px_rgba(13,148,136,0.5)]"
+              <Link
+                href="?modal=booking"
+                scroll={false}
+                className="inline-flex items-center justify-center h-14 px-8 text-base bg-teal-600 hover:bg-teal-500 text-white shadow-[0_0_40px_rgba(13,148,136,0.3)] transition-all hover:shadow-[0_0_60px_rgba(13,148,136,0.5)] font-medium rounded-lg"
               >
                 Book Appointment
-              </Button>
+              </Link>
               <Button
                 variant="outline"
                 size="lg"

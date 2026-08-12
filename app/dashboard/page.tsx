@@ -8,6 +8,7 @@ import {
   FiUsers, FiCalendar, FiDollarSign, FiActivity,
   FiTrendingUp, FiArrowUpRight, FiChevronLeft, FiChevronRight, FiClock,
 } from "react-icons/fi";
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from 'recharts';
 import { getDashboardMetrics } from "@/app/actions/dashboard";
 
 const weeklyData = [
@@ -106,22 +107,25 @@ export default function DashboardPage() {
                 <h3 className="text-sm font-bold text-heading" style={{ fontFamily: 'var(--font-heading)' }}>Revenue Trends</h3>
                 <span className="text-[10px] text-muted bg-gray-50 px-2.5 py-1 rounded-lg font-semibold">Weekly</span>
               </div>
-              <div className="h-44 flex items-end gap-2 pt-4">
-                {weeklyData.map((d) => (
-                  <div key={d.day} className="flex-1 flex flex-col items-center gap-2">
-                    <div className="w-full relative group">
-                      <div
-                        className="w-full rounded-lg bg-gradient-to-t from-teal-600 to-teal-300 transition-all duration-500 group-hover:from-teal-700 group-hover:to-teal-400 relative min-h-[4px]"
-                        style={{ height: `${d.value * 1.6}px` }}
-                      >
-                        <span className="absolute -top-5 left-1/2 -translate-x-1/2 text-[9px] font-semibold text-teal-600 opacity-0 group-hover:opacity-100 transition-opacity">
-                          {d.value}%
-                        </span>
-                      </div>
-                    </div>
-                    <span className="text-[10px] text-muted font-medium">{d.day}</span>
-                  </div>
-                ))}
+              <div className="h-44 w-full">
+                <ResponsiveContainer width="100%" height="100%">
+                  <AreaChart data={weeklyData} margin={{ top: 10, right: 0, left: -20, bottom: 0 }}>
+                    <defs>
+                      <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="#0D9488" stopOpacity={0.3}/>
+                        <stop offset="95%" stopColor="#0D9488" stopOpacity={0}/>
+                      </linearGradient>
+                    </defs>
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
+                    <XAxis dataKey="day" axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#94a3b8' }} dy={10} />
+                    <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#94a3b8' }} />
+                    <Tooltip 
+                      contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 20px rgba(0,0,0,0.08)' }}
+                      itemStyle={{ color: '#0f172a', fontWeight: 'bold' }}
+                    />
+                    <Area type="monotone" dataKey="value" stroke="#0D9488" strokeWidth={3} fillOpacity={1} fill="url(#colorRevenue)" />
+                  </AreaChart>
+                </ResponsiveContainer>
               </div>
             </motion.div>
 
@@ -130,25 +134,19 @@ export default function DashboardPage() {
               <div className="flex items-center justify-between mb-5">
                 <h3 className="text-sm font-bold text-heading" style={{ fontFamily: 'var(--font-heading)' }}>Performance</h3>
               </div>
-              <div className="h-44 flex items-end gap-3 pt-4">
-                {performanceData.map((d, i) => {
-                  const colors = ["#0D9488", "#0F766E", "#14B8A6", "#0D9488", "#0F766E"];
-                  return (
-                    <div key={d.label} className="flex-1 flex flex-col items-center gap-2 group">
-                      <div className="w-full relative">
-                        <div
-                          className="w-full rounded-lg transition-all duration-500 min-h-[4px] group-hover:opacity-80"
-                          style={{ height: `${d.value * 1.6}px`, backgroundColor: colors[i] }}
-                        >
-                          <span className="absolute -top-5 left-1/2 -translate-x-1/2 text-[9px] font-semibold opacity-0 group-hover:opacity-100 transition-opacity" style={{ color: colors[i] }}>
-                            {d.value}%
-                          </span>
-                        </div>
-                      </div>
-                      <span className="text-[10px] text-muted font-bold">{d.label}</span>
-                    </div>
-                  );
-                })}
+              <div className="h-44 w-full">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={performanceData} margin={{ top: 10, right: 0, left: -20, bottom: 0 }} barSize={32}>
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
+                    <XAxis dataKey="label" axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#94a3b8', fontWeight: 'bold' }} dy={10} />
+                    <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#94a3b8' }} />
+                    <Tooltip 
+                      cursor={{ fill: 'transparent' }}
+                      contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 20px rgba(0,0,0,0.08)' }}
+                    />
+                    <Bar dataKey="value" fill="#0D9488" radius={[6, 6, 6, 6]} />
+                  </BarChart>
+                </ResponsiveContainer>
               </div>
             </motion.div>
           </div>

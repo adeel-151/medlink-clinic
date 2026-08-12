@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
@@ -9,8 +9,9 @@ import { FaStethoscope } from "react-icons/fa";
 import {
   FiGrid, FiBarChart2, FiUsers, FiCalendar, FiFileText,
   FiClipboard, FiSettings, FiLogOut, FiSearch, FiBell,
-  FiMenu, FiX, FiChevronDown,
+  FiMenu, FiX, FiChevronDown, FiCheck
 } from "react-icons/fi";
+import { getNotifications, markNotificationAsRead } from "@/app/actions/dashboard";
 
 const sidebarLinks = [
   { label: "Dashboard", href: "/dashboard", icon: FiGrid },
@@ -27,11 +28,25 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const { data: session, status } = useSession();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
+  const [notificationsOpen, setNotificationsOpen] = useState(false);
+  const [notifications, setNotifications] = useState<any[]>([]);
+
+  useEffect(() => {
+    if (session?.user?.id) {
+      getNotifications(session.user.id).then(setNotifications);
+    }
+  }, [session?.user?.id]);
+
+  const handleMarkAsRead = async (id: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    await markNotificationAsRead(id);
+    setNotifications(prev => prev.map(n => n.id === id ? { ...n, isRead: true } : n));
+  };
 
   // If loading or unauthenticated, wait for middleware
   if (status === "loading") return <div className="min-h-screen flex items-center justify-center bg-bg-dashboard"><div className="w-8 h-8 border-4 border-teal-500 border-t-transparent rounded-full animate-spin"></div></div>;
 
-  const role = (session?.user as any)?.role as string | undefined;
+  const role = session?.user?.role;
 
   // Filter links for Patients vs Admins
   const visibleLinks = sidebarLinks.filter(link => {
@@ -165,10 +180,56 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             </div>
 
             <div className="flex items-center gap-2.5">
-              <button className="relative p-2.5 rounded-[12px] bg-gray-50 text-muted hover:bg-primary-50 hover:text-primary-600 transition-all">
-                <FiBell size={17} />
-                <span className="absolute top-2 right-2 w-1.5 h-1.5 bg-red-500 rounded-full" />
-              </button>
+              <div className="relative">
+                <button 
+                  onClick={() => setNotificationsOpen(!notificationsOpen)}
+                  className="relative p-2.5 rounded-[12px] bg-gray-50 text-muted hover:bg-primary-50 hover:text-primary-600 transition-all"
+                >
+                  <FiBell size={17} />
+                  {notifications.filter(n => !n.isRead).length > 0 && (
+                    <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border border-white" />
+                  )}
+                </button>
+
+                <AnimatePresence>
+                  {notificationsOpen && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                      transition={{ duration: 0.2 }}
+                      className="absolute right-0 mt-3 w-[320px] bg-white rounded-2xl shadow-[0_10px_40px_rgba(0,0,0,0.08)] border border-gray-100 overflow-hidden py-2"
+                    >
+                      <div className="px-4 py-3 border-b border-gray-50 flex items-center justify-between">
+                        <h4 className="text-sm font-bold text-heading" style={{ fontFamily: 'var(--font-heading)' }}>Notifications</h4>
+                        <span className="text-[11px] font-semibold text-teal-600 bg-teal-50 px-2 py-0.5 rounded-full">
+                          {notifications.filter(n => !n.isRead).length} New
+                        </span>
+                      </div>
+                      <div className="max-h-[300px] overflow-y-auto">
+                        {notifications.length === 0 ? (
+                          <div className="px-4 py-8 text-center text-sm text-muted">No notifications yet.</div>
+                        ) : (
+                          notifications.map((notif) => (
+                            <div key={notif.id} className={`px-4 py-3 border-b border-gray-50 last:border-0 hover:bg-gray-50 transition-colors flex gap-3 ${!notif.isRead ? 'bg-teal-50/30' : ''}`}>
+                              <div className="mt-0.5 w-2 h-2 shrink-0 rounded-full bg-teal-500" style={{ opacity: notif.isRead ? 0 : 1 }} />
+                              <div className="flex-1">
+                                <p className={`text-[13px] ${!notif.isRead ? 'font-semibold text-heading' : 'text-gray-600'}`}>{notif.message}</p>
+                                <span className="text-[10px] text-muted font-medium mt-1 block">{notif.time}</span>
+                              </div>
+                              {!notif.isRead && (
+                                <button onClick={(e) => handleMarkAsRead(notif.id, e)} className="text-teal-600 hover:text-teal-800 p-1 rounded-md hover:bg-teal-100/50 transition-colors" title="Mark as read">
+                                  <FiCheck size={14} />
+                                </button>
+                              )}
+                            </div>
+                          ))
+                        )}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
               <div className="relative">
                 <button
                   onClick={() => setProfileOpen(!profileOpen)}

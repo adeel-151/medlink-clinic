@@ -1,6 +1,3 @@
-"use client";
-
-import { useState } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import BookingModal from "@/components/BookingModal";
@@ -14,25 +11,23 @@ import Testimonials from "@/components/home/Testimonials";
 import EmergencyCTA from "@/components/home/EmergencyCTA";
 
 export default function HomePage() {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
   return (
     <>
       <Navbar />
 
       <main className="overflow-hidden">
-        <Hero onBookAppointment={() => setIsModalOpen(true)} />
+        <Hero />
         <Stats />
         <About />
         <Features />
         <Departments />
-        <Doctors onBookAppointment={() => setIsModalOpen(true)} />
+        <Doctors />
         <Testimonials />
-        <EmergencyCTA onBookAppointment={() => setIsModalOpen(true)} />
+        <EmergencyCTA />
       </main>
 
       <Footer />
-      <BookingModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
+      <BookingModal />
     </>
   );
 }

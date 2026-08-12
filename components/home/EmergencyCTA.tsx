@@ -1,10 +1,8 @@
 import { FiPhone, FiCalendar } from "react-icons/fi";
 
-interface EmergencyCTAProps {
-  onBookAppointment: () => void;
-}
+import Link from "next/link";
 
-export default function EmergencyCTA({ onBookAppointment }: EmergencyCTAProps) {
+export default function EmergencyCTA() {
   return (
     <section className="bg-slate-900 py-20 lg:py-24" id="contact">
       <div className="max-w-1280 text-center">
@@ -19,10 +17,10 @@ export default function EmergencyCTA({ onBookAppointment }: EmergencyCTAProps) {
             <FiPhone size={18} />
             Call Emergency
           </a>
-          <button onClick={onBookAppointment} className="btn-outline-white">
+          <Link href="?modal=booking" scroll={false} className="btn-outline-white inline-flex items-center justify-center gap-2">
             <FiCalendar size={18} />
             Book Online
-          </button>
+          </Link>
         </div>
       </div>
     </section>
