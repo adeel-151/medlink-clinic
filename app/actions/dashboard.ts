@@ -125,6 +125,7 @@ export async function getRecords() {
 // =======================
 // CREATE MUTATIONS
 // =======================
+import { revalidatePath } from "next/cache";
 
 export async function createPatient(data: { firstName: string, lastName: string, email: string, phone: string, dateOfBirth: string }) {
   try {
@@ -148,9 +149,10 @@ export async function createPatient(data: { firstName: string, lastName: string,
         dateOfBirth: new Date(data.dateOfBirth),
       }
     });
+    revalidatePath("/dashboard/patients");
   } catch (error) {
     console.error("Error creating patient:", error);
-    throw error;
+    throw new Error("Failed to create patient");
   }
 }
 
@@ -176,45 +178,64 @@ export async function createDoctor(data: { firstName: string, lastName: string, 
         experienceYears: data.experienceYears,
       }
     });
+    revalidatePath("/dashboard/doctors");
   } catch (error) {
     console.error("Error creating doctor:", error);
-    throw error;
+    throw new Error("Failed to create doctor");
   }
 }
 
 export async function createAppointment(data: { patientId: string, doctorId: string, datetime: string }) {
-  await prisma.appointment.create({
-    data: {
-      patientId: data.patientId,
-      doctorId: data.doctorId,
-      datetime: new Date(data.datetime),
-      status: "SCHEDULED",
-    }
-  });
+  try {
+    await prisma.appointment.create({
+      data: {
+        patientId: data.patientId,
+        doctorId: data.doctorId,
+        datetime: new Date(data.datetime),
+        status: "SCHEDULED",
+      }
+    });
+    revalidatePath("/dashboard/appointments");
+  } catch (error) {
+    console.error("Error creating appointment:", error);
+    throw new Error("Failed to create appointment");
+  }
 }
 
 export async function createPrescription(data: { patientId: string, doctorId: string, medicines: string, dosage: string, duration: string }) {
-  await prisma.prescription.create({
-    data: {
-      patientId: data.patientId,
-      doctorId: data.doctorId,
-      medicines: data.medicines,
-      dosage: data.dosage,
-      duration: data.duration,
-    }
-  });
+  try {
+    await prisma.prescription.create({
+      data: {
+        patientId: data.patientId,
+        doctorId: data.doctorId,
+        medicines: data.medicines,
+        dosage: data.dosage,
+        duration: data.duration,
+      }
+    });
+    revalidatePath("/dashboard/prescriptions");
+  } catch (error) {
+    console.error("Error creating prescription:", error);
+    throw new Error("Failed to create prescription");
+  }
 }
 
 export async function createRecord(data: { patientId: string, doctorId: string, diagnoses: string, treatments: string, notes: string }) {
-  await prisma.medicalRecord.create({
-    data: {
-      patientId: data.patientId,
-      doctorId: data.doctorId,
-      diagnoses: data.diagnoses,
-      treatments: data.treatments,
-      notes: data.notes,
-    }
-  });
+  try {
+    await prisma.medicalRecord.create({
+      data: {
+        patientId: data.patientId,
+        doctorId: data.doctorId,
+        diagnoses: data.diagnoses,
+        treatments: data.treatments,
+        notes: data.notes,
+      }
+    });
+    revalidatePath("/dashboard/records");
+  } catch (error) {
+    console.error("Error creating record:", error);
+    throw new Error("Failed to create record");
+  }
 }
 
 export async function getNotifications(userId: string) {
@@ -232,8 +253,13 @@ export async function getNotifications(userId: string) {
 }
 
 export async function markNotificationAsRead(id: string) {
-  await prisma.notification.update({
-    where: { id },
-    data: { isRead: true },
-  });
+  try {
+    await prisma.notification.update({
+      where: { id },
+      data: { isRead: true },
+    });
+    // Can revalidate if notifications page exists, but this is a soft UI update
+  } catch (error) {
+    console.error("Error marking notification:", error);
+  }
 }
